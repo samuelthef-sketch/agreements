@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Agreement</title>
+  <meta name="description" content="Review and sign the Research Assignment Files and Deliverables agreement." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6'/%3E%3Cpath d='M8 17c1.5-2 3-2 4 0s2.5 2 4 0'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 17c1.5-2 3-2 4 0s2.5 2 4 0"/></svg>
+      <span class="brand">Digital Agreement</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h1>Agreement Form</h1>
+      <p>Research Assignment Files and Deliverables. Please read the whole form, type your full name, sign, and submit.</p>
+    </section>
+
+    <section class="card form-card">
+      <div class="form-preview">
+        <canvas id="formCanvas" width="1545" height="2000" aria-label="Agreement form preview with your name and signature"></canvas>
+        <div id="formLoading" class="form-loading">Loading form…</div>
+      </div>
+      <button type="button" id="saveImageBtn" class="btn btn-outline">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Save image agreement
+      </button>
+    </section>
+
+    <section class="card">
+      <form id="agreementForm" novalidate>
+        <div class="field">
+          <label for="fullName">Full name of The Recipient</label>
+          <div class="input-wrap">
+            <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Type your full name" maxlength="80" />
+            <span id="nameIcon" class="input-icon" aria-hidden="true"></span>
+          </div>
+          <p id="nameMsg" class="field-msg" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <span class="label">Signature of The Recipient</span>
+          </div>
+          <div id="padWrap" class="pad-wrap">
+            <canvas id="signaturePad" aria-label="Signature pad. Draw your signature here."></canvas>
+            <span id="padHint" class="pad-hint">Sign here</span>
+            <span class="pad-line" aria-hidden="true"></span>
+          </div>
+          <div class="pad-actions">
+            <button type="button" id="redoBtn" class="btn btn-ghost" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+              Redo
+            </button>
+          </div>
+          <p id="sigMsg" class="field-msg" role="status" aria-live="polite"></p>
+        </div>
+
+        <label class="check">
+          <input id="agreeBox" type="checkbox" />
+          <span class="check-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+          </span>
+          <span>I have read and understood all the statements in this agreement, and I agree to all of them.</span>
+        </label>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary btn-block">Submit</button>
+        <p id="formMsg" class="field-msg center" role="alert"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">Prepared by Samuel Nash Poblete</footer>
+
+  <!-- Confirm: box not checked -->
+  <div id="confirmModal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-icon warn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      </div>
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <p>You did not check the agreement box. Are you sure you want to submit without checking it?</p>
+      <p class="muted small">Under item (j), an unchecked box means the agreement is not accepted.</p>
+      <div class="modal-actions">
+        <button type="button" id="confirmNo" class="btn btn-outline">No</button>
+        <button type="button" id="confirmYes" class="btn btn-primary">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thank you -->
+  <div id="thanksModal" class="modal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="thanksTitle">
+      <div class="modal-icon ok">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+      </div>
+      <h2 id="thanksTitle">Thank you!</h2>
+      <p id="thanksText">Your signed agreement has been submitted.</p>
+      <div class="modal-actions">
+        <button type="button" id="thanksSave" class="btn btn-outline">Save image agreement</button>
+        <button type="button" id="thanksClose" class="btn btn-primary">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
