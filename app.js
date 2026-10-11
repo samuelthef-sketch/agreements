@@ -317,6 +317,11 @@
         nameIcon.innerHTML = ICONS.bad;
         setMsg(nameMsg, 'More than one person on the list has this name. Please type your full name.', 'err');
         break;
+      case 'already_submitted':
+        nameWrap.classList.add('invalid');
+        nameIcon.innerHTML = ICONS.bad;
+        setMsg(nameMsg, "You're done with this agreement. Please type another recipient's name. If you think this is wrong, please contact Sam.", 'err');
+        break;
       case 'error':
         nameWrap.classList.add('invalid');
         nameIcon.innerHTML = ICONS.bad;
@@ -433,7 +438,8 @@
       const blob = await canvasBlob();
       const path = await rpc('create_submission', { p_name: nameInput.value.trim(), p_agreed: agreed });
       await uploadImage(path, blob);
-      await rpc('finalize_submission', { p_path: path });
+      const finalized = await rpc('finalize_submission', { p_path: path });
+      if (!finalized) throw new Error('already_submitted');
 
       finalSignedAt = signedAt;
       submitted = true;
@@ -449,7 +455,13 @@
       openModal(thanksModal);
     } catch (err) {
       renderForm();
-      setMsg(formMsg, `Submission failed: ${err.message}. Please try again.`, 'err');
+      if (/already_submitted/.test(err.message)) {
+        showNameState('already_submitted');
+        setMsg(formMsg, 'This recipient has already submitted the agreement.', 'err');
+        nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setMsg(formMsg, `Submission failed: ${err.message}. Please try again.`, 'err');
+      }
     } finally {
       if (!submitted) setBusy(false);
     }
